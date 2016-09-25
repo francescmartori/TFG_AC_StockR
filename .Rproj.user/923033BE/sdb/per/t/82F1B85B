@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "# server.R\n\nlibrary(quantmod)\nsource(\"helpers.R\")\n\nshinyServer(function(input, output) {\n\n  dataInput <- reactive({\n    from_date <- as.POSIXlt(as.Date(input$dates[1], format = \"%m/%d/%Y\"))\n    from_date$mon <- from_date$mon - 10\n    \n    getSymbols(input$symb, src = \"yahoo\", \n               from = from_date, \n               to = input$dates[2],\n               auto.assign = FALSE)\n  })\n  \n  output$plot <- renderPlot({   \n    data <- dataInput()\n    if (input$adjust) data <- adjust(dataInput())\n    \n    opciones <- \"addVo();\"  \n    opciones <- paste(opciones, if(input$Bollinger) \"addBBands();\", sep = \"\")\n    opciones <- paste(opciones, if(input$SMA_70days) \"addSMA(n=70, col=2);\", sep = \"\")\n    opciones <- paste(opciones, if(input$SMA_200days) \"addSMA(n=200, col=4);\", sep = \"\")\n    \n    chartSeries(data, theme = chartTheme(\"white\"), \n                type = \"line\", \n                log.scale = input$log, \n                TA = opciones,\n                name = input$symb,\n                subset=paste(input$dates[1],\"::\",input$dates[2], sep=\"\"))\n    \n    output$mytable = renderTable({\n      \n      table <- data.frame(\"Technical Indicator\" = c(\"Bollinger\", \"Medias\", \"Global\"),\n                          \"Recommendations\" =  factor(x = rep(\"Neutro\", 3), levels = c(\"Comprar\", \"Vender\", \"Neutro\")))\n      \n      if(input$Bollinger) {\n        data <- dataInput()\n        if (input$adjust) data <- adjust(dataInput())\n        \n        boll <- BBands(data[, 4])\n        \n        if(tail(boll$up, n=1) < tail(data, n=1)[,4]) {\n          table[1,2] <- \"Vender\"\n        } else if(tail(boll$dn, n=1) > tail(data, n=1)[,4]) {\n          table[1,2] <- \"Comprar\"\n        }\n      }\n      \n      if(input$SMA_70days & input$SMA_200days) {\n        data <- dataInput()\n        if (input$adjust) data <- adjust(dataInput())\n        \n        SMA70 <- SMA(data[,4], n = 70)\n        SMA200 <- SMA(data[,4], n = 200)\n        \n        if(tail(SMA70, n=1) > tail(SMA200, n=1)) {\n          table[2,2] <- \"Comprar\"\n        } else if(tail(SMA70, n=1) < tail(SMA200, n=1)) {\n          table[2,2] <- \"Vender\"\n        }\n      }\n      \n      if(table$Recommendations[1] == table$Recommendations[2]) {\n        table$Recommendations[3] <- table$Recommendations[1]\n      }\n      \n      table\n    })   \n  }, height = 450, width = 700)\n  \n  \n})",
+    "created" : 1474378211223.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4143685187",
+    "id" : "82F1B85B",
+    "lastKnownWriteTime" : 1474463878,
+    "last_content_update" : 1474463878998,
+    "path" : "C:/Users/Francesc/hubiC/IQS/Recerca/TFCs/2016/Antonio Gálvez/TFG_AG_StockR/Antonio/server.R",
+    "project_path" : null,
+    "properties" : {
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

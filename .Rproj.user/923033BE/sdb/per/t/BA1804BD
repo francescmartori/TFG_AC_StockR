@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "library(shiny)\n\nshinyUI(fluidPage(\n  titlePanel(\"stockR - Antonio Gálvez\"),\n  \n  sidebarLayout(\n    sidebarPanel(\n      \n      textInput(\"symb\", \"Symbol\", \"^IBEX\"),\n    \n      dateRangeInput(\"dates\", \n        \"Date range\",\n        start = \"2016-01-01\", \n        end = as.character(Sys.Date())),\n      br(),\n\n      checkboxInput(\"Bollinger\", \"Add Bollinger Bands\"),\n      checkboxInput(\"SMA_70days\", \"Add SMA 70 days - Red Line\"),\n      checkboxInput(\"SMA_200days\", \"Add SMA 200 days - Blue Line\"),\n      \n      br(),\n      \n      checkboxInput(\"log\", \"Plot y axis on log scale\", \n        value = FALSE),\n      \n      checkboxInput(\"adjust\", \n        \"Adjust prices for inflation\", value = FALSE),\n      br(),\n      helpText(\"\")\n    ),\n    \n    mainPanel(\n     plotOutput(\"plot\"),\n     br(),\n     br(),\n     br(),\n     br(),\n     br(),\n     \n     tableOutput('mytable'))\n  )\n))",
+    "created" : 1474378213387.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "960198930",
+    "id" : "BA1804BD",
+    "lastKnownWriteTime" : 1474466717,
+    "last_content_update" : 1474466717051,
+    "path" : "C:/Users/Francesc/hubiC/IQS/Recerca/TFCs/2016/Antonio Gálvez/TFG_AG_StockR/Antonio/ui.R",
+    "project_path" : null,
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
