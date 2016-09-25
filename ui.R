@@ -1,4 +1,6 @@
-library(shiny)
+#ui.r
+
+SP_list <- read.delim("S&P500_Anexo.txt", header = TRUE, stringsAsFactors = FALSE)
 
 shinyUI(fluidPage(
   titlePanel("stockR - Antonio Gálvez"),
@@ -6,7 +8,7 @@ shinyUI(fluidPage(
   sidebarLayout(
     sidebarPanel(
       
-      textInput("symb", "Symbol", "^IBEX"),
+      selectInput("symb", "Symbol", SP_list$Company,"^IBEX"),
     
       dateRangeInput("dates", 
         "Date range",

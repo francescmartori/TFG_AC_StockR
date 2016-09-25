@@ -1,7 +1,9 @@
 # server.R
 
 library(quantmod)
+library(shiny)
 source("helpers.R")
+SP_list <- read.delim("S&P500_Anexo.txt", header = TRUE, stringsAsFactors = FALSE)
 
 shinyServer(function(input, output) {
 
@@ -9,7 +11,7 @@ shinyServer(function(input, output) {
     from_date <- as.POSIXlt(as.Date(input$dates[1], format = "%m/%d/%Y"))
     from_date$mon <- from_date$mon - 10
     
-    getSymbols(input$symb, src = "yahoo", 
+    getSymbols(SP_list[SP_list$Company == input$symb, ]$Symb, src = "yahoo", 
                from = from_date, 
                to = input$dates[2],
                auto.assign = FALSE)
