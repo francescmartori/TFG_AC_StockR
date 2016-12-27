@@ -3,11 +3,13 @@
 SP_list <- read.delim("S&P500_Anexo.txt", header = TRUE, stringsAsFactors = FALSE)
 
 shinyUI(fluidPage(
-  titlePanel("stockR - Antonio Gálvez"),
+  tags$head(includeScript("Google_Analytics.js")),
+  titlePanel(title=div(img(src="logo.IQS.png"), "StockR")),
   
   sidebarLayout(
     sidebarPanel(
-      
+      helpText("Gálvez, Martori, 2016. Big Data en las Finanzas: Estado de la cuestión y desarrollo de la aplicación StockR, Univ. Ramon Llull" ),
+      br(),
       selectInput("symb", "Symbol", SP_list$Company,"^IBEX"),
     
       dateRangeInput("dates", 
@@ -17,8 +19,10 @@ shinyUI(fluidPage(
       br(),
 
       checkboxInput("Bollinger", "Add Bollinger Bands"),
-      checkboxInput("SMA_70days", "Add SMA 70 days - Red Line"),
-      checkboxInput("SMA_200days", "Add SMA 200 days - Blue Line"),
+      checkboxInput("check_SMA_short", "Add SMA short term - Red Line", value = TRUE),
+      numericInput("SMA_short", "SMA short term days", value = 20, min = 1, max = 45),
+      checkboxInput("check_SMA_long", "Add SMA long term - Blue Line", value = TRUE),
+      numericInput("SMA_long", "SMA long term days", value = 100, min = 50, max = 300),
       
       br(),
       
@@ -27,18 +31,16 @@ shinyUI(fluidPage(
       
       checkboxInput("adjust", 
         "Adjust prices for inflation", value = FALSE),
-      br(),
-      helpText("")
+      br()
+      
     ),
     
     mainPanel(
-     plotOutput("plot"),
-     br(),
-     br(),
-     br(),
-     br(),
-     br(),
-     
-     tableOutput('mytable'))
+      tabsetPanel(type = "tabs", 
+                  tabPanel("Charts", br(), 
+                           plotOutput("plot")),
+                  tabPanel("Data", br(), dataTableOutput("dades")),
+                  tabPanel("Recommendations", br(), tableOutput('mytable'))
+      )
   )
-))
+)))

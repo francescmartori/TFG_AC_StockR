@@ -23,8 +23,8 @@ shinyServer(function(input, output) {
     
     opciones <- "addVo();"  
     opciones <- paste(opciones, if(input$Bollinger) "addBBands();", sep = "")
-    opciones <- paste(opciones, if(input$SMA_70days) "addSMA(n=70, col=2);", sep = "")
-    opciones <- paste(opciones, if(input$SMA_200days) "addSMA(n=200, col=4);", sep = "")
+    opciones <- paste(opciones, if(input$check_SMA_short) paste("addSMA(n=", input$SMA_short, ",col=2);", sep = ""))
+    opciones <- paste(opciones, if(input$check_SMA_long) paste("addSMA(n=", input$SMA_long, ",col=4);", sep = ""))
     
     chartSeries(data, theme = chartTheme("white"), 
                 type = "line", 
@@ -32,7 +32,8 @@ shinyServer(function(input, output) {
                 TA = opciones,
                 name = input$symb,
                 subset=paste(input$dates[1],"::",input$dates[2], sep=""))
-    
+    }, height = 450, width = 700)
+  
     output$mytable = renderTable({
       
       table <- data.frame("Technical Indicator" = c("Bollinger", "Medias", "Global"),
@@ -51,16 +52,16 @@ shinyServer(function(input, output) {
         }
       }
       
-      if(input$SMA_70days & input$SMA_200days) {
+      if(input$check_SMA_short & input$check_SMA_long) {
         data <- dataInput()
         if (input$adjust) data <- adjust(dataInput())
         
-        SMA70 <- SMA(data[,4], n = 70)
-        SMA200 <- SMA(data[,4], n = 200)
+        SMA_S <- SMA(data[,4], n = input$SMA_short)
+        SMA_L <- SMA(data[,4], n = input$check_SMA_long)
         
-        if(tail(SMA70, n=1) > tail(SMA200, n=1)) {
+        if(tail(SMA_S, n=1) > tail(SMA_L, n=1)) {
           table[2,2] <- "Comprar"
-        } else if(tail(SMA70, n=1) < tail(SMA200, n=1)) {
+        } else if(tail(SMA_S, n=1) < tail(SMA_L, n=1)) {
           table[2,2] <- "Vender"
         }
       }
@@ -70,8 +71,7 @@ shinyServer(function(input, output) {
       }
       
       table
-    })   
-  }, height = 450, width = 700)
+    })
   
-  
+  output$dades <- renderDataTable(dataInput())
 })
